@@ -1,0 +1,37 @@
+- name: Install Ansible Prereqs
+  hosts: all
+  gather_facts: no
+  tasks:
+    - raw: "apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y python-minimal python-pip"
+- name: Install Docker Prereqs
+  hosts: all
+  gather_facts: yes
+  tasks:
+    - package:
+        name: "{{item}}"
+        state: latest
+      with_items:
+        - apt-transport-https
+        - ca-certificates
+        - curl
+        - software-properties-common
+    - apt_key:
+        url: "https://download.docker.com/linux/ubuntu/gpg"
+        state: present
+    - apt_repository:
+        repo: "deb [arch=amd64] https://download.docker.com/linux/ubuntu xenial stable"
+        state: present
+
+- name: Install Docker
+  hosts: all
+  gather_facts: yes
+  tasks:
+    - package:
+        name: "docker-ce"
+        state: latest
+    - user:
+        name: "{{ ansible_ssh_user }}"
+        groups: docker
+        append: yes
+  roles:
+  - splunk

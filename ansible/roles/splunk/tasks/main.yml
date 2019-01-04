@@ -1,0 +1,5 @@
+---
+- name: copy script
+  copy: src=install.sh dest=/home/ubuntu mode=0777
+- name: run script
+  shell: sh /home/ubuntu/install.sh
